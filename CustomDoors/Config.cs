@@ -1,4 +1,4 @@
-﻿using Interactables.Interobjects.DoorUtils;
+using Interactables.Interobjects.DoorUtils;
 using System.ComponentModel;
 
 namespace CustomDoors;
@@ -31,9 +31,9 @@ public sealed class Config
     [Description("List of items and their caracteristics")]
     public ItemConfig[] Items { get; set; } = new ItemConfig[3]
     {
-        new ItemConfig() { RelativePositionY = 1, Item = ItemType.Medkit, RoomName = "LCZ_ClassDSpawn (1)", ScaleX = 1, ScaleY = 1, ScaleZ = 1 },
-        new ItemConfig() { RelativePositionY = 1, Item = ItemType.Medkit, RoomName = "LCZ_ClassDSpawn (1)", ScaleX = 1, ScaleY = 1, ScaleZ = 1, RelativeRotationY = 90 },
-        new ItemConfig() { RelativePositionY = 1, Item = ItemType.Medkit, RoomName = "LCZ_ClassDSpawn (1)", ScaleX = 2, ScaleY = 1, ScaleZ = 2 },
+        new ItemConfig() { RelativePositionY = 1, ItemChance = 30, Item = ItemType.Medkit, RoomName = "LCZ_ClassDSpawn (1)", ScaleX = 1, ScaleY = 1, ScaleZ = 1 },
+        new ItemConfig() { RelativePositionY = 1, ItemChance = 30, Item = ItemType.Medkit, RoomName = "LCZ_ClassDSpawn (1)", ScaleX = 1, ScaleY = 1, ScaleZ = 1, RelativeRotationY = 90 },
+        new ItemConfig() { RelativePositionY = 1, ItemChance = 30, Item = ItemType.Medkit, RoomName = "LCZ_ClassDSpawn (1)", ScaleX = 2, ScaleY = 1, ScaleZ = 2 },
     };
 }
 
@@ -68,6 +68,7 @@ public sealed class DoorConfig : SpawnableConfig
 public sealed class ItemConfig : SpawnableConfig
 {
     public ItemType Item { get; set; }
+    public int ItemChance { get; set; }
     public ushort Ammo { get; set; }
     public uint Attachments { get; set; }
 }
