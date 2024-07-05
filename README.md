@@ -1,3 +1,5 @@
+# This code needs cleanup and is NOT ready for large scale servers or merging into the original plugin! If you have any questions contact me.
+
 # CustomDoors
 More doors = More fun ! Allows server owners to add custom doors and items to the map.
 
