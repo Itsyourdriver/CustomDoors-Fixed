@@ -20,6 +20,13 @@ All KeycardPermissions :
     ScpOverride
 ```
 
+All DoorTypes:
+```
+    EZ
+    HCZ
+    LCZ
+```
+
 All ItemType :
 ```
     None
@@ -85,3 +92,5 @@ All Scp244State :
         Destroyed = 2
         PickedUp = 3
 ```
+
+
