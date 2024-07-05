@@ -1,4 +1,4 @@
-﻿using PluginAPI.Core.Attributes;
+using PluginAPI.Core.Attributes;
 using Mirror;
 using PluginAPI.Enums;
 using UnityEngine;
@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using InventorySystem.Items.Firearms.Ammo;
 using InventorySystem.Items;
 using InventorySystem.Items.Usables.Scp244;
+using MEC;
+
 
 namespace CustomDoors;
 
@@ -22,7 +24,10 @@ public sealed class EventHandler
     [PluginEvent(ServerEventType.WaitingForPlayers)]
     public void WaitingForPlayers()
     {
-        List<SpawnableConfig>  spawnableObjects = new(PluginClass.Singleton.config.Doors);
+
+        Timing.CallDelayed(1f, () =>
+        {
+        List<SpawnableConfig> spawnableObjects = new(PluginClass.Singleton.config.Doors);
         spawnableObjects.AddRange(PluginClass.Singleton.config.Items);
 
         //foreach (SpawnableConfig spawnableConfig in PluginClass.Singleton.config.SpawnableObjects) bugged
@@ -56,39 +61,69 @@ public sealed class EventHandler
 
             else if (spawnableConfig is ItemConfig itemConfig)
             {
-                ItemBase itemBase = ReferenceHub.HostHub.inventory.ServerAddItem(itemConfig.Item);
 
-                if (itemBase == null)
+                    Int32 RandomN = UnityEngine.Random.Range(1, 100);
+
+                    if (RandomN <= itemConfig.ItemChance)
+                    {
+                  //      Log.Debug($"We're spawning the item of {itemConfig.Item} as it got within the random number");
+
+                    //  ItemBase itemBase;
+                    // InventoryItemLoader.TryGetItem(itemConfig.Item, out itemBase);
+                    ItemBase itemBase = ReferenceHub.HostHub.inventory.ServerAddItem(itemConfig.Item);
+                    
+                    if (itemBase == null)
                 {
-                    Log.Error($"ItemBase null : {itemConfig.Item}, continues to the next room.");
+                    Log.Error($"ItemBase null : {itemConfig.Item}, continues to the next room. (this is before firearm check fyi)");
                     continue;
                 }
+               
 
                 if (itemBase is Firearm firearmPickup)
-                    firearmPickup.Status = new FirearmStatus((byte)itemConfig.Ammo, itemConfig.Ammo == 0 ? FirearmStatusFlags.None : FirearmStatusFlags.MagazineInserted, itemConfig.Attachments);
+                    {
+                        firearmPickup.Status = new FirearmStatus((byte)itemConfig.Ammo, itemConfig.Ammo == 5 ? FirearmStatusFlags.None : FirearmStatusFlags.MagazineInserted, itemConfig.Attachments);
+                        ItemPickupBase itemPickup2 = itemBase.ServerDropItem();
 
-                ItemPickupBase itemPickup = itemBase.ServerDropItem();
-                if (itemPickup == null)
-                {
-                    Log.Error($"ItemPickup null : {itemConfig.Item}, continues to the next room.");
-                    continue;
+                        itemPickup2.transform.position = finalPosition;
+                        itemPickup2.transform.rotation = Quaternion.Euler(objectRotation);
+                        itemPickup2.transform.localScale = scale;
+                        continue;
+                    }
+                  
+
+
+
+                    ItemPickupBase itemPickup = UnityEngine.Object.Instantiate(itemBase.PickupDropModel, finalPosition, Quaternion.Euler(objectRotation));
+
+
+
+                    if (itemPickup != null)
+                    {
+                        itemPickup.NetworkInfo = new PickupSyncInfo(itemConfig.Item, 1.0f);
+                        NetworkServer.Spawn(itemPickup.gameObject);
+
+                    }
+
+                    if (itemPickup == null)
+                    {
+                        Log.Error($"ItemPickup null : {itemConfig.Item}, continues to the next room.");
+                       continue;
+                    }
+
+                    if (itemPickup is AmmoPickup ammoPickup)
+                        ammoPickup.NetworkSavedAmmo = itemConfig.Ammo;
+
+                    else if (itemPickup is Scp244DeployablePickup scp244)
+                        scp244.State = (Scp244State)itemConfig.Ammo;
+                    }
                 }
-
-                itemPickup.transform.position = finalPosition;
-                itemPickup.transform.rotation = Quaternion.Euler(objectRotation);
-                itemPickup.transform.localScale = scale;
-
-                if (itemPickup is AmmoPickup ammoPickup)
-                    ammoPickup.NetworkSavedAmmo = itemConfig.Ammo;
-
-                else if (itemPickup is Scp244DeployablePickup scp244)
-                    scp244.State = (Scp244State)itemConfig.Ammo;
+                    
+                else
+                    Log.Error($"Config type wasn't found : {spawnableConfig}, continues to the next element.");
             }
-
-            else
-                Log.Error($"Config type wasn't found : {spawnableConfig}, continues to the next element.");
-        }
+        });
     }
+
 
     public Vector3 GetRotatedPosition(float rotationDiffY, Vector3 originalPosition) =>
     new(
