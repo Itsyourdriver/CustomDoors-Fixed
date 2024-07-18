@@ -1,4 +1,4 @@
-# This code needs cleanup and is NOT ready for large scale servers or merging into the original plugin! I do not plan on adding builds as the original repo has no license. If you need help compiling join the NorthwoodAPI Discord server.
+## This code needs cleanup!! It is not ready for a pull request on the main repo and STILL HAS PROBLEMS
 # CustomDoors
 More doors = More fun ! Allows server owners to add custom doors and items to the map.
 
