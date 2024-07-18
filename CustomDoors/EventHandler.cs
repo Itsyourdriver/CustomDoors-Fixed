@@ -37,7 +37,7 @@ public sealed class EventHandler
 
             if (room == null)
             {
-                Log.Error($"Romm wasn't found : {spawnableConfig.RoomName}, continues to the next room.");
+                Log.Error($"Room wasn't found : {spawnableConfig.RoomName}, continues to the next room.");
                 continue;
             }
 
@@ -74,7 +74,7 @@ public sealed class EventHandler
                     
                     if (itemBase == null)
                 {
-                    Log.Error($"ItemBase null : {itemConfig.Item}, continues to the next room. (this is before firearm check fyi)");
+                    Log.Error($"ItemBase null : {itemConfig.Item}, continues to the next room.");
                     continue;
                 }
                
